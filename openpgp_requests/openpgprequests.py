@@ -175,7 +175,7 @@ class OpenPGPApiRequest():
         try:
             j = r.json()
         except Exception:
-            j = None
+            j = []
         return(j)
 
     def _pgpapi_request(self, method=None, endpoint=None,
