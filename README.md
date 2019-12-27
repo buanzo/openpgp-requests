@@ -17,5 +17,9 @@ improve upon or be inspired by.
 
 The server has better security for the passphrase, check it out.
 
+## Examples
+
+Please check [the examples folder in this repo](https://github.com/buanzo/openpgp-requests/tree/master/examples).
+
 Cheers.
 Buanzo.
