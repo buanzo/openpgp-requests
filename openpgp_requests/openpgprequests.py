@@ -124,57 +124,61 @@ class OpenPGPApiRequest():
         cr = self._signed_request(cmd='trust')
         pprint(cr)
 
-    def head(self, url=None, **kwargs):
-        if url is None:
+    def head(self, endpoint=None, **kwargs):
+        if endpoint is None:
             return(None)
         r = self._pgpapi_request(method='GET',
-                                 url=url,
+                                 endpoint=endpoint,
                                  params=params, **kwargs)
         return(r)
         # TODO: extract path, params, then pgpapi-ize and send
 
-    def get(self, url=None, params=None, **kwargs):
-        if url is None:
+    def get(self, endpoint=None, params=None, **kwargs):
+        if endpoint is None:
             return(None)
         r = self._pgpapi_request(method='GET',
-                                 url=url,
+                                 endpoint=endpoint,
                                  params=params, **kwargs)
         return(r)
 
-    def post(self, url=None, data=None, **kwargs):
-        if url is None:
+    def post(self, endpoint=None, data=None, **kwargs):
+        if endpoint is None:
             return(None)
         r = self._pgpapi_request(method='POST',
-                                 url=url,
+                                 endpoint=endpoint,
                                  data=data, **kwargs)
         return(r)
 
-    def put(self, url=None, data=None, **kwargs):
-        if url is None:
+    def put(self, endpoint=None, data=None, **kwargs):
+        if endpoint is None:
             return(None)
-        r = self._pgpapi_request(method='PUT', url=url, data=data, **kwargs)
+        r = self._pgpapi_request(method='PUT', endpoint=endpoint, data=data, **kwargs)
         return(r)
 
-    def patch(self, url=None, data=None, **kwargs):
-        if url is None:
+    def patch(self, endpoint=None, data=None, **kwargs):
+        if endpoint is None:
             return(None)
-        r = self._pgpapi_request(method='PATCH', url=url, data=data, **kwargs)
+        r = self._pgpapi_request(method='PATCH', endpoint=endpoint, data=data, **kwargs)
         return(r)
 
-    def delete(self, url=None, **kwargs):
-        if url is None:
+    def delete(self, endpoint=None, **kwargs):
+        if endpoint is None:
             return(None)
-        r = self._pgpapi_request(method='DELETE', url=url, **kwargs)
+        r = self._pgpapi_request(method='DELETE', endpoint=endpoint, **kwargs)
         return(r)
 
     def _clear_request(self, cmd=None):
         if cmd is None:
             raise(ValueError)
-        url = '{}clear'.format(self.target)
+        url = '{}/clear'.format(self.target)
         r = requests.get(url, params={'cmd': cmd})
-        return(r.json())
+        try:
+            j = r.json()
+        except Exception:
+            j = None
+        return(j)
 
-    def _pgpapi_request(self, method=None, url=None,
+    def _pgpapi_request(self, method=None, endpoint=None,
                         params=None, data=None, **kwargs):
 
         if self.recipient is None:
@@ -185,13 +189,13 @@ class OpenPGPApiRequest():
 
         # add content-type: application/openpgp-api
         # Now we need to build encrypted_data. We are encapsulating, depending
-        # on method: url, params/data, headers, etc.
+        # on method: endpoint, params/data, headers, etc.
         capsule = {}
         try:
             isonow = datetime.datetime.utcnow().isoformat()
             capsule['request_utc_datetime'] = isonow
             capsule['method'] = method
-            capsule['url'] = url
+            capsule['url'] = endpoint
             capsule['params'] = json.dumps(params)
             capsule['data'] = json.dumps(data)
             capsule['headers'] = kwargs['headers']
@@ -218,7 +222,7 @@ class OpenPGPApiRequest():
         HEADER = 'X-OpenPGP-Data-JSON-string'
         headers[HEADER] = json.dumps(odata)
         resp = responses.Response(method=method,
-                                  url=url,
+                                  url=endpoint,
                                   body=body,
                                   status=status,
                                   content_type=headers['Content-Type'],
@@ -240,16 +244,16 @@ def test_openpgp_api_server():
     x = OpenPGPApiRequest(homedir=h,
                           my_fingerprint=fpr,
                           passphrase='the_passphrase')
-    z = x.get(url='get', headers={'X-extra-header': 'wow'})
+    z = x.get(endpoint='get', headers={'X-extra-header': 'wow'})
     print(z.body)
-    z = x.get(url='tuvieja',
+    z = x.get(endpoint='tuvieja',
               headers={'X-header': 'X-value-get'})
     print(z.body)
-    z = x.post(url='tuotravieja',
+    z = x.post(endpoint='tuotravieja',
                headers={'X-header': 'X-value-post'},
                data={'data': 'dataaaaa en post'})
     print(z.body)
-    z = x.put(url='cuac',
+    z = x.put(endpoint='cuac',
               headers={'X-header': 'X-value-put'},
               data={'data': 'dataaaaa en put'})
     print(z.body)
