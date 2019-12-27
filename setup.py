@@ -21,6 +21,5 @@ setup(name='openpgp-requests',
       python_requires='>=3.6',
       install_requires=requirements,
       long_description=long_description,
-      long_description_content_type='text/markdown'
-      long_descri
+      long_description_content_type='text/markdown',
       zip_safe=False)
