@@ -1,19 +1,13 @@
 #!/usr/bin/env python3
 from openpgp_requests import OpenPGPApiRequest
 
-# In fact, url in the context of OpenPGPApiRequest init should
-# be renamed to something else. The real URL is constructed
-# from the server, port and ssl parameters.
-# The 'url' for each OpenPGPApiRequest client request actually means PATH.
-# For instance:
-
-
 # Fingerprint for the local key we want to use:
 fpr = 'AFINGERPRINTHERE'
 
 # Location of the keyring where that key is stored:
 homedir = '/path/to/keyring/folder/containing/that/fpr'
 
+# The real URL is constructed from the server, port and ssl parameters.
 # Parameters for API base:
 server = 'www.example.net'
 ssl = True
@@ -31,12 +25,12 @@ client = OpenPGPApiRequest(homedir=homedir,
                            passphrase='the_passphrase')
 
 # Testing a GET method encapsulated in OpenPGP
-z = client.get(url=endpoint,
+z = client.get(endpoint=endpoint,
                headers={'X-extra-header': 'wow'})
 print(z.body)
 
 # Same, but using POST
-z = client.post(url=endpoint,
+z = client.post(endpoint=endpoint,
                 headers={'X-header': 'X-value-post'},
                 data={'data': 'dataaaaa in post payload'})
 print(z.body)
